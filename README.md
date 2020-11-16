@@ -17,9 +17,19 @@ This project aims to build a collection of snippets that can help measure tags m
 
 ## Using
 
+The examples so far all rely on `performance.mark` to record the point at which the event occured.  
+
+This can be replaced with a call to an analytics or other product API as needed.  
+
 ## Contributing
 
+If you've got ideas or examples on how to measure the impact of other 3rd-party tags I'm very open to contributions (there are so many tags out there)
+
+Raise an issue if you've got a tag that you'd like to measure but don't know how.
+
 ## Supporting
+
+If you find these snippets useful and want to say thanks or encourage me to add more, feel free to [Buy Me a Coffee](https://www.buymeacoffee.com/andydavies)
 
 ## License
 
