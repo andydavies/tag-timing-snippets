@@ -10,7 +10,7 @@ const callback = function(mutationsList, observer) {
        if(!mutation.target.classList.contains('async-hide') && mutation.attributeName === 'class' && mutation.oldValue.includes('async-hide')) {
            performance.mark('anti-flicker-end');
           
-           observer.remove();
+           observer.disconnect();
  
            break;
        }
