@@ -28,18 +28,16 @@ It should be placed directly after the CMP stub in the page
 // Creates User Timing marks for cmpuishown, useractioncomplete & tcloaded
 if (typeof window.__tcfapi === 'function') {
     
+    let markedEvents = [];
     window.__tcfapi('addEventListener', 2, (tcdata, success) => { 
 
-        if(success) { 
+        if(success && !markedEvents.includes(tcdata.eventStatus)) { 
 
             performance.mark('tcf-' + tcdata.eventStatus); 
 
-            // Stop listending after TCF loaded, or user action complete to prevent generation
-            // of extra cpuishown & useractioncomplete marks if visitor reopens CMP UI
-            if(tcdata.eventStatus === 'useractioncomplete' || 
-               tcdata.eventStatus === 'tcloaded') {
-                window.__tcfapi('removeEventListener', 2, (success) => {  }, tcdata.tcfListenerId);
-            }
+            // Prevent listening to events twice, to prevent generation of extra 
+            // cpuishown & useractioncomplete marks if visitor reopens CMP UI
+            markedEvents.push(tcdata.eventStatus);
         }
     });
 }
