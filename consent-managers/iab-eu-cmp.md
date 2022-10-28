@@ -14,11 +14,7 @@ Assuming the user doesn't relaunch the consent dialog later each page should hav
 
 From a performance monitoring perspective `cmpuishown` and `tcloaded` seem to the the two most interesting to track. The first measures how quickly the consent dialog is displayed, the second when the CMP is ready to respond to adtech (when the dialog isn't shown)
 
-This sample creates User Timing marks for each of the three events.
-
-If the event is either `useractioncomplete` or `tcloaded` then it tries to remove the listener to prevent extra `cmpuishown` and `useractioncomplete` marks if a user manually launches the consent dialog. 
-
-Removing the listener seems to fail with some CMPs as the `tcdata.listenerId` passed in the event data isn't valid.
+This sample creates User Timing marks for each of the three events once.
 
 It should be placed directly after the CMP stub in the page
 
@@ -28,18 +24,16 @@ It should be placed directly after the CMP stub in the page
 // Creates User Timing marks for cmpuishown, useractioncomplete & tcloaded
 if (typeof window.__tcfapi === 'function') {
     
+    let markedEvents = [];
     window.__tcfapi('addEventListener', 2, (tcdata, success) => { 
 
-        if(success) { 
+        if(success && !markedEvents.includes(tcdata.eventStatus)) { 
 
             performance.mark('tcf-' + tcdata.eventStatus); 
 
-            // Stop listending after TCF loaded, or user action complete to prevent generation
-            // of extra cpuishown & useractioncomplete marks if visitor reopens CMP UI
-            if(tcdata.eventStatus === 'useractioncomplete' || 
-               tcdata.eventStatus === 'tcloaded') {
-                window.__tcfapi('removeEventListener', 2, (success) => {  }, tcdata.tcfListenerId);
-            }
+            // Prevent listening to events twice, to prevent generation of extra 
+            // cpuishown & useractioncomplete marks if visitor reopens CMP UI
+            markedEvents.push(tcdata.eventStatus);
         }
     });
 }
